@@ -32,9 +32,6 @@ bool calculate(int num1, int num2, char op, int *result) {
         case '|':
             *result = num1 | num2;
             return true;
-        case '^':
-            *result = num1 ^ num2;
-            return true;
         default:
             printf("Erreur: opérateur inconnu '%c'.\n", op);
             return false;

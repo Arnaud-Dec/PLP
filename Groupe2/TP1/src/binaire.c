@@ -12,7 +12,7 @@ int main() {
     int nb_valeurs = sizeof(valeurs) / sizeof(unsigned int);
         
     for (int i = 0; i < nb_valeurs; i++) {
-        printf("Décimal : %6u  ->  Binaire : ", valeurs[i]);
+        printf("Décimal: %8u ->  Binaire : ", valeurs[i]);
         afficher_binaire(valeurs[i]);
         printf("\n");
     }
