@@ -1,6 +1,8 @@
 # Bibliothèques
 * stdio.h
 * stdbool.h
+* limits.h
+* float.h
 
 # Références
 * cours d'introduction
