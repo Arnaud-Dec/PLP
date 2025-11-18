@@ -37,7 +37,7 @@ int main() {
         }
         
         if (occurrences_ligne > 0) {
-            printf("Ligne %d : %d occurrence(s)\n", numero_ligne, occurrences_ligne);
+            printf("\nLigne %d : %d occurrence(s)\n", numero_ligne, occurrences_ligne);
             printf(" -> %s", ligne);
         }
     }
