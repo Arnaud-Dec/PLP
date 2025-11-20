@@ -32,9 +32,18 @@ L'objectif du premier exercice est de comprendre le fonctionnement de l'interpr�
 **Questions à réfléchir :**
 
 * Qu'est-ce qui se passe lorsque vous tapez une commande inconnue?
+
+Il fini dans le else : Commande non reconnue. Essayez 'echo <text>' pour afficher du texte, ou tapez 'quit' pour quitter.
+
 * Comment l'interpréteur traite les espaces dans les commandes?
+comme des caractères indépendants
+
 * Qu'est-ce qui se passe lorsque vous utilisez la commande `echo` avec des arguments?
+les arguments sont print et affichés comme des caractères à part entière
+
 * Comment pourriez-vous modifier le code pour ajouter de nouvelles commandes?
+en ajoutant un else if 
+
 
 **Conseils pour la modification du code :**
 
