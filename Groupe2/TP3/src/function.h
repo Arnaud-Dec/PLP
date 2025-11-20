@@ -1,5 +1,6 @@
 struct function
 {
     char name[50];
-     void (*func)(char*);
+    char name_fr[50];
+     void (*func)(char* ,int);
 };
