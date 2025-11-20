@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 /**
  * Programme qui simule un interpréteur de commandes simple.
@@ -31,6 +32,11 @@ int main()
             printf("Arrêt...\n");
             continuer = 0;
         }
+        else if (strncmp(commande, "date ", 4) == 0){
+            time_t t = time(NULL);
+            printf("%s\n", ctime(&t));
+        }
+
         else if (strncmp(commande, "echo ", 5) == 0)
         {
             // Traite la commande "echo" pour afficher du texte
