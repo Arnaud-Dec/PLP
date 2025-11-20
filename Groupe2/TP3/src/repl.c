@@ -50,11 +50,9 @@ int main()
         {"echo " , traiter_echo},
         {"quit" , traiter_quit},
         {"version" , afficher_version},
-        {"help" , afficher_aide};
-    }
+        {"help" , afficher_aide}
+    };
     
-    
-
     // Boucle principale qui lit et traite les commandes utilisateur
     while (continuer)
     {
@@ -69,32 +67,17 @@ int main()
         // Enlève le caractère de fin de ligne ajouté par fgets
         commande[strcspn(commande, "\n")] = 0;
 
-        // Traite la commande en fonction de son contenu
-        if (strcmp(commande, "quit") == 0)
-        {
-           traiter_quit();
+        int nb_cmd = sizeof(table_f) / sizeof(table_f[0]);
+        int find_f = 0;
+
+        for(int i = 0; i < nb_cmd ; i++){
+            if (strncmp(commande, table_f[i].name, strlen(table_f[i].name)) == 0){
+                table_f[i].func(commande);
+                find_f = 1;
+            }
         }
 
-        else if (strncmp(commande, "date", 4) == 0){
-            time_t t = time(NULL);
-            printf("%s\n", ctime(&t));
-        }
-
-        else if (strncmp(commande, "version", 7) == 0){
-            afficher_version();
-        }
-
-        else if (strncmp(commande, "help" , 4) == 0){
-            afficher_aide();
-        }
-
-        else if (strncmp(commande, "echo ", 5) == 0)
-        {
-            traiter_echo(commande);
-        }
-        else
-        {
-            // Affiche un message d'erreur si la commande est inconnue
+        if (!find_f) {
             printf("Commande non reconnue. Essayez 'echo <text>' pour afficher du texte, ou tapez 'quit' pour quitter.\n");
         }
 
