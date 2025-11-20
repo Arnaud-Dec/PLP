@@ -18,7 +18,7 @@ void afficher_version(char* commande ,int fr){
 
 void afficher_aide(char* commande ,int fr){
 
-    if(fr = 0){
+    if(fr == 0){
         printf("===== Help - Commandes disponibles =====\n");
         printf("help        : Affiche cette aide\n");
         printf("version     : Affiche la version du programme\n");
@@ -70,7 +70,7 @@ void traiter_echo(char* commande , int fr){
 
 void traiter_quit(char* commande ,int fr){
 
-    if(fr = 0){
+    if(fr == 0){
         printf("Stop...\n");
     }else{
         printf("Arrêt...\n");
@@ -78,12 +78,33 @@ void traiter_quit(char* commande ,int fr){
     continuer = 0;
 }
 
+void normaliser_cmd(char* dest, const char* src) {
+    int j = 0;
+    int debut = 1;
+
+    for (int i = 0; src[i] != '\0' || src[i] == 32; i++) {
+        unsigned char c = src[i];
+
+        if (c < 128) {
+            if (debut && c == ' ') continue;
+            debut = 0;
+            if (c >= 'A' && c <= 'Z')
+                dest[j++] = c + 32;
+            else
+                dest[j++] = c;
+        }
+        else {
+            dest[j++] = c;
+        }
+    }
+    dest[j] = '\0';
+}
 
 int main()
 {
     struct function table_f[] = {
-        {"echo " ,"affiché ", traiter_echo },
-        {"quit" ,"quitter" ,traiter_quit},
+        {"echo" ,"affiché ", traiter_echo },
+        {"quit" ,"kuitter" ,traiter_quit},
         {"version", "version_fr" , afficher_version},
         {"help" , "aide" ,afficher_aide},
         {"date" , "date" , traiter_date}
@@ -96,7 +117,6 @@ int main()
 
         // Buffer pour stocker la commande utilisateur
         char commande[1024];
-
         // Lit la commande utilisateur et la stocke dans le buffer
         fgets(commande, sizeof(commande), stdin);
 
@@ -106,15 +126,19 @@ int main()
         int nb_cmd = sizeof(table_f) / sizeof(table_f[0]);
         int find_f = 0;
         int fr ;
+
+        char cmd[1024];
+        normaliser_cmd(cmd, commande);
+
         for(int i = 0; i < nb_cmd ; i++){
             fr = 0;
-            if (strncmp(commande, table_f[i].name, strlen(table_f[i].name)) == 0){
-                table_f[i].func(commande , fr);
+            if (strncmp(cmd, table_f[i].name, strlen(cmd)) == 0){
+                table_f[i].func(commande, fr);
                 find_f = 1;
             }
-            else if (strncmp(commande, table_f[i].name_fr, strlen(table_f[i].name_fr)) == 0){
+            else if (strncmp(cmd, table_f[i].name_fr, strlen(cmd)) == 0){
                 fr = 1;
-                table_f[i].func(commande , fr);
+                table_f[i].func(commande, fr);
                 find_f = 1;
             }
         }
