@@ -1,7 +1,7 @@
 # Rapport de synthèse - Programmation en C
 
 **Année:** 2025-2026  
-**Auteurs:** [Votre nom]  
+**Auteurs:** Arnaud et Théo
 **Date:** Novembre 2025
 
 ---

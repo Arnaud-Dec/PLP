@@ -3,7 +3,7 @@
  * Objectif : Générer un tableau de 100 structures 'Couleur' (RGBA) aléatoires.
  * Le programme identifie ensuite les couleurs distinctes dans le tableau
  * et compte le nombre d'occurrences de chacune d'elles, affichant les résultats.
- * Auteur : [Votre Nom/Pseudo]
+ * Auteur : Théo
  * Date : Novembre 2025
  */
 

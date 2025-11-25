@@ -3,7 +3,7 @@
  * Objectif : Rechercher une phrase donnée par l'utilisateur dans un fichier texte
  * spécifié, ligne par ligne. Le programme compte et affiche le nombre
  * d'occurrences de la phrase par ligne, ainsi que le total général.
- * Auteur : [Votre Nom/Pseudo]
+ * Auteur : Arnaud
  * Date : Novembre 2025
  */
 
