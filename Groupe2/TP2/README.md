@@ -8,6 +8,9 @@
 * chatGPT
 * connaissance directe
 * stackoverflow
+* https://en.cppreference.com/w/c.html
+* https://sourceware.org/gdb/documentation
+* https://gcc.gnu.org/onlinedocs
 
 # Difficulté
 * Gestion des couleurs et comptage
