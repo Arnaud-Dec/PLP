@@ -3,39 +3,45 @@
 #include <float.h>
 
 int main(void) {
-    char c = CHAR_MIN;
-    signed char sc = SCHAR_MIN;
-    unsigned char uc = UCHAR_MAX;
+    // Types char
+    char c = CHAR_MIN;                 // minimum char
+    signed char sc = SCHAR_MIN;        // minimum signed char
+    unsigned char uc = UCHAR_MAX;      // maximum unsigned char
     printf("c: %d, sc: %d, uc: %u\n", c, sc, uc);
 
-    short s = SHRT_MIN;
-    signed short ss = SHRT_MIN;
-    unsigned short us = USHRT_MAX;
+    // Types short
+    short s = SHRT_MIN;                // minimum short
+    signed short ss = SHRT_MIN;        // minimum signed short
+    unsigned short us = USHRT_MAX;     // maximum unsigned short
     printf("s: %d, ss: %d, us: %u\n", s, ss, us);
 
-    int i = INT_MIN;
-    signed int si = INT_MIN;
-    unsigned int ui = UINT_MAX;
+    // Types int
+    int i = INT_MIN;                    // minimum int
+    signed int si = INT_MIN;            // minimum signed int
+    unsigned int ui = UINT_MAX;         // maximum unsigned int
     printf("i: %d, si: %d, ui: %u\n", i, si, ui);
 
-    long int li = LONG_MIN;
-    signed long int sli = LONG_MIN;
-    unsigned long int uli = ULONG_MAX;
+    // Types long int
+    long int li = LONG_MIN;             // minimum long
+    signed long int sli = LONG_MIN;     // minimum signed long
+    unsigned long int uli = ULONG_MAX;  // maximum unsigned long
     printf("li: %ld, sli: %ld, uli: %lu\n", li, sli, uli);
 
-    long long int lli = LLONG_MIN;
-    signed long long int slli = LLONG_MIN;
-    unsigned long long int ulli = ULLONG_MAX;
+    // Types long long int
+    long long int lli = LLONG_MIN;              // minimum long long
+    signed long long int slli = LLONG_MIN;      // minimum signed long long
+    unsigned long long int ulli = ULLONG_MAX;   // maximum unsigned long long
     printf("lli: %lld, slli: %lld, ulli: %llu\n", lli, slli, ulli);
 
-    float f = -FLT_MAX;
+    // Types flottants
+    float f = -FLT_MAX;               // minimum float (négatif)
     printf("f: %e\n", f);
 
-    double d = -DBL_MAX;
+    double d = -DBL_MAX;              // minimum double (négatif)
     printf("d: %e\n", d);
 
-    long double ld = -LDBL_MAX;
+    long double ld = -LDBL_MAX;       // minimum long double (négatif)
     printf("ld: %Le\n", ld);
 
-    return 0;
+    return 0; // Fin du programme
 }
