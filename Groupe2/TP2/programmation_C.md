@@ -513,7 +513,7 @@ Au cours de ce TP, nous avons développé des compétences essentielles en progr
 4. **Structures** : organisation des données complexes
 5. **Fichiers** : lecture et traitement de fichiers texte
 
-### Bonnes pratiques retenues
+### Bonnes pratiques 
 
 - Toujours compiler avec les warnings : `gcc -Wall -Wextra`
 - Utiliser `-ggdb3` pour faciliter le débogage
@@ -535,7 +535,6 @@ Ces connaissances constituent une base solide pour :
 - Documentation GCC : https://gcc.gnu.org/onlinedocs/
 - Manuel GDB : https://sourceware.org/gdb/documentation/
 - Référence C : https://en.cppreference.com/w/c
-- The C Programming Language (K&R)
 
 ---
 
