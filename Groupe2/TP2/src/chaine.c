@@ -4,7 +4,7 @@
  * standard de la librairie <string.h> (strlen, strcpy, strcat).
  * Le programme calcule la longueur, copie et concatène deux chaînes
  * saisies par l'utilisateur.
- * Auteur : [Votre Nom/Pseudo]
+ * Auteur : Arnaud
  * Date : Novembre 2025
  */
 
@@ -19,11 +19,11 @@ int main(){
 
     // Demande et lecture de la première chaîne.
     // NOTE : scanf("%s", ...) lit jusqu'au premier espace ou saut de ligne.
-    printf("Chaine 1 < 50 char:"); 
+    printf("Chaine 1 < 25 char:"); 
     scanf("%s", chaine1);
 
     // Demande et lecture de la seconde chaîne.
-    printf("\nChaine 2 < 50 char:");
+    printf("\nChaine 2 < 25 char:");
     scanf("%s", chaine2);
 
     // --- Calcul de la longueur de la chaîne 1 (similaire à strlen) ---

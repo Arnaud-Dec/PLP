@@ -3,7 +3,7 @@
  * Objectif : Gérer et manipuler les données de 5 étudiant.e.s en utilisant
  * une structure C (struct) pour organiser le nom, l'adresse et les notes.
  * Le programme initialise le premier étudiant et demande la saisie des 4 autres.
- * Auteur : [Votre Nom/Pseudo]
+ * Auteur : Arnaud
  * Date : Novembre 2025
  */
 

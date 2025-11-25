@@ -4,7 +4,7 @@
  * prédéfini de 10 phrases. L'objectif principal est de réaliser la comparaison
  * de chaînes (fonction sont_identiques) sans utiliser les fonctions
  * standards comme strcmp, comme l'exige l'exercice.
- * Auteur : [Votre Nom/Pseudo]
+ * Auteur : Théo
  * Date : Novembre 2025
  */
 
