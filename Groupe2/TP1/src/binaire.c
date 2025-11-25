@@ -1,3 +1,9 @@
+/*
+ * Fichier: binaire.c
+ * Objectif: Afficher la représentation binaire d'entiers non signés
+ * Date: 06/11/2025
+ * Auteur: Théo
+*/
 #include <stdio.h>
 
 // Affiche la représentation binaire d'un entier non signé

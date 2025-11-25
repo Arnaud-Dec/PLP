@@ -1,3 +1,14 @@
+/*
+ * Fichier: sizeof_types.c
+ * Objectif: Afficher la taille (en octets) des principaux types de données en C
+ *           - char, signed char, unsigned char
+ *           - short, unsigned short
+ *           - int, unsigned int
+ *           - long int, unsigned long int, long long int
+ *           - float, double, long double
+ * Date: 06/11/2025
+ * Auteur: Arnaud
+*/
 #include <stdio.h>
 
 int main(){

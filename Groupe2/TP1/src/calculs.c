@@ -1,3 +1,12 @@
+/*
+ * Fichier: calculs.c
+ * Objectif: Permettre à l'utilisateur de réaliser des opérations arithmétiques et binaires
+ *           - Opérations binaires : +, -, *, /, %, &, |
+ *           - Opération unaire : complément binaire (~)
+ *           - Vérification des erreurs (division/modulo par zéro, opérateur inconnu)
+ * Date: 06/11/2025
+ * Auteur: Théo
+*/
 #include <stdio.h>
 #include <stdbool.h>
 

@@ -1,3 +1,9 @@
+/*
+ * Fichier: cercle.c
+ * Objectif: Calculer et afficher l'aire et le périmètre d'un cercle à partir de son rayon
+ * Date: 06/11/2025
+ * Auteur: Théo
+*/
 #include <stdio.h>
 
 int main() {

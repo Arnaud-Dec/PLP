@@ -1,3 +1,12 @@
+/*
+ * Fichier: boucles.c
+ * Objectif: Afficher un motif en triangle avec des boucles for et while
+ *           - Les deux premières lignes entièrement en '*'
+ *           - Les lignes intermédiaires avec '*' sur les bords et '#' à l'intérieur
+ *           - La dernière ligne entièrement en '*'
+ * Date: 06/11/2025
+ * Auteur: Théo
+*/
 #include <stdio.h>
 
 // Affichage du motif avec des boucles for

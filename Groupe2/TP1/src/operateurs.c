@@ -1,3 +1,11 @@
+/*
+ * Fichier: operateurs.c
+ * Objectif: Illustrer l'utilisation des opérateurs arithmétiques et de comparaison en C
+ *           - Opérateurs arithmétiques : +, -, *, /, %
+ *           - Opérateurs de comparaison : ==, >
+ * Date: 06/11/2025
+ * Auteur: Arnaud
+*/
 #include <stdio.h>
 
 int main(){

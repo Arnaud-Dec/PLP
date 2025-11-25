@@ -1,3 +1,11 @@
+/*
+ * Fichier: variables.c
+ * Objectif: Afficher les valeurs minimales et maximales des principaux types de données en C
+ *           - Types entiers : char, short, int, long int, long long int (signés et non signés)
+ *           - Types flottants : float, double, long double
+ * Date: 06/11/2025
+ * Auteur: Théo
+*/
 #include <stdio.h>
 #include <limits.h>
 #include <float.h>

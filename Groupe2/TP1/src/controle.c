@@ -1,3 +1,12 @@
+/*
+ * Fichier: controle.c
+ * Objectif: Vérifier et afficher certaines propriétés des nombres de 0 à 1000
+ *           - Non divisible par 4 mais divisible par 6
+ *           - Pair et divisible par 8
+ *           - Divisible par 5 ou 7 mais pas par 10
+ * Date: 06/11/2025
+ * Auteur: Arnaud
+*/
 #include <stdio.h>
 
 int main() {
