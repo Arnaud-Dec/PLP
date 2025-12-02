@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 #include "function.h"
+#include "lexer.h"
+#include "parseur.h"
+#include "evaluation.h"
 
 /**
  * Programme qui simule un interpréteur de commandes simple.
@@ -12,18 +16,18 @@ const char* version = "1.0.1";
 int continuer = 1; // Variable pour contrôler la boucle principale
 
 
-void afficher_version(char* commande ,int fr){
+void afficher_version(char* commande, int fr) {
     printf("%s\n", version);
 }
 
-void afficher_aide(char* commande ,int fr){
-
-    if(fr == 0){
+void afficher_aide(char* commande, int fr) {
+    if (fr == 0) {
         printf("===== Help - Commandes disponibles =====\n");
         printf("help        : Affiche cette aide\n");
         printf("version     : Affiche la version du programme\n");
         printf("date        : Affiche la date et l'heure actuelles\n");
         printf("echo <txt>  : Affiche le texte suivant la commande\n");
+        printf("calc <expr> : Calcule une expression (ex: calc 2 + 3)\n");
         printf("quit        : Quitte le programme\n");
         printf("========================================\n");
     }
@@ -33,49 +37,84 @@ void afficher_aide(char* commande ,int fr){
         printf("version     : Affiche la version du programme\n");
         printf("date        : Affiche la date et l'heure actuelles\n");
         printf("echo <txt>  : Affiche le texte suivant la commande\n");
-        printf("quit        : Quitte le programme\n");
+        printf("calc <expr> : Calcule une expression (ex: calc 2 + 3)\n");
+        printf("quitter     : Quitte le programme\n");
         printf("========================================\n");
     }
 }
 
-void traiter_date(char* commande , int fr){
+void traiter_date(char* commande, int fr) {
     time_t t = time(NULL);
-    printf("%s\n", ctime(&t));
+    printf("%s", ctime(&t));
 }
 
-void traiter_echo(char* commande , int fr){
-
-    if (fr == 0){
-
+void traiter_echo(char* commande, int fr) {
+    if (fr == 0) {
         // Traite la commande "echo" pour afficher du texte
         printf("Echo: ");
-
         // Imprime la chaîne
-        for (int i = 5; commande[i] != '\0'; i++)
-        {
+        for (int i = 5; commande[i] != '\0'; i++) {
             printf("%c", commande[i]);
         }
-        printf("\n"); // Saut de ligne après la sortie
-    }else{
+        printf("\n");
+    }
+    else {
         printf("Affiché: ");
-
         // Imprime la chaîne
-        for (int i = 9; commande[i] != '\0'; i++)
-        {
+        for (int i = 9; commande[i] != '\0'; i++) {
             printf("%c", commande[i]);
         }
-        printf("\n"); // Saut de ligne après la sortie
+        printf("\n");
     }
 }
 
-void traiter_quit(char* commande ,int fr){
-
-    if(fr == 0){
+void traiter_quit(char* commande, int fr) {
+    if (fr == 0) {
         printf("Stop...\n");
-    }else{
+    }
+    else {
         printf("Arrêt...\n");
     }
     continuer = 0;
+}
+
+// NOUVELLE FONCTION : Traiter les calculs mathématiques
+void traiter_calcul(char* commande, int fr) {
+    // Extraire l'expression après "calc " ou "calculer "
+    char* expression;
+    
+    if (fr == 0) {
+        // Commande "calc"
+        if (strlen(commande) <= 5) {
+            printf("Erreur : Veuillez fournir une expression (ex: calc 2 + 3)\n");
+            return;
+        }
+        expression = commande + 5; // Sauter "calc "
+    }
+    else {
+        // Commande "calculer"
+        if (strlen(commande) <= 9) {
+            printf("Erreur : Veuillez fournir une expression (ex: calculer 2 + 3)\n");
+            return;
+        }
+        expression = commande + 9; // Sauter "calculer "
+    }
+    
+    // Parser l'expression
+    Expression expr = parser_parse(expression);
+    
+    if (expr.valide) {
+        // Évaluer l'expression
+        ResultatEvaluation res = evaluer_expression(expr);
+        
+        if (res.valide) {
+            printf("%g\n", res.resultat);
+        }
+        else {
+            printf("%s\n", res.erreur);
+        }
+    }
+    // Les erreurs de parsing sont déjà affichées par parser_parse()
 }
 
 void normaliser_cmd(char* dest, const char* src) {
@@ -103,12 +142,16 @@ void normaliser_cmd(char* dest, const char* src) {
 int main()
 {
     struct function table_f[] = {
-        {"echo" ,"affiché ", traiter_echo },
-        {"quit" ,"kuitter" ,traiter_quit},
-        {"version", "version_fr" , afficher_version},
-        {"help" , "aide" ,afficher_aide},
-        {"date" , "date" , traiter_date}
+        {"echo", "affiché", traiter_echo},
+        {"quit", "quitter", traiter_quit},
+        {"version", "version", afficher_version},
+        {"help", "aide", afficher_aide},
+        {"date", "date", traiter_date},
+        {"calc", "calculer", traiter_calcul}  // NOUVELLE COMMANDE
     };
+    
+    printf("=== Interpréteur de commandes ===\n");
+    printf("Tapez 'help' ou 'aide' pour voir les commandes disponibles\n\n");
     
     // Boucle principale qui lit et traite les commandes utilisateur
     while (continuer)
@@ -125,21 +168,23 @@ int main()
 
         int nb_cmd = sizeof(table_f) / sizeof(table_f[0]);
         int find_f = 0;
-        int fr ;
+        int fr;
 
         char cmd[1024];
         normaliser_cmd(cmd, commande);
 
-        for(int i = 0; i < nb_cmd ; i++){
+        for (int i = 0; i < nb_cmd; i++) {
             fr = 0;
-            if (strncmp(cmd, table_f[i].name, strlen(cmd)) == 0){
+            if (strncmp(cmd, table_f[i].name, strlen(table_f[i].name)) == 0) {
                 table_f[i].func(commande, fr);
                 find_f = 1;
+                break;  // Sortir après avoir trouvé la commande
             }
-            else if (strncmp(cmd, table_f[i].name_fr, strlen(cmd)) == 0){
+            else if (strncmp(cmd, table_f[i].name_fr, strlen(table_f[i].name_fr)) == 0) {
                 fr = 1;
                 table_f[i].func(commande, fr);
                 find_f = 1;
+                break;  // Sortir après avoir trouvé la commande
             }
         }
 
