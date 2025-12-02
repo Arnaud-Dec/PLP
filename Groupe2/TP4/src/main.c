@@ -29,8 +29,12 @@ void infixToPostfix(const char *infix, char *postfix) {
 
         // Si c'est un chiffre → on l'ajoute à la sortie
         if (isdigit(c)) {
-            postfix[j++] = c;
+            while (isdigit(infix[i])) {
+                postfix[j++] = infix[i];
+                i++;
+            }
             postfix[j++] = ' '; // séparateur
+            i--;
         }
 
         else if (c == '(') {
@@ -69,12 +73,63 @@ void infixToPostfix(const char *infix, char *postfix) {
     postfix[j] = '\0';
 }
 
-int main() {
-    char infix[MAX] = "(3 + 4) * 5";
-    char postfix[MAX];
+void calculate(const char* expr, int* result) {
+    int stack[MAX];
+    int top = -1;
 
+    int i = 0;
+
+    while (expr[i] != '\0') {
+        if (expr[i] == ' ') {
+            i++;
+            continue;
+        }
+
+        if (isdigit(expr[i])) {
+            int num = 0;
+
+            while (isdigit(expr[i])) {
+                num = num * 10 + (expr[i] - '0');
+                i++;
+            }
+
+            stack[++top] = num;
+            continue;
+        }
+
+        char op = expr[i];
+        int b = stack[top--];
+        int a = stack[top--];
+
+        int val = 0;
+        switch (op) {
+            case '+': val = a + b; break;
+            case '-': val = a - b; break;
+            case '*': val = a * b; break;
+            case '/': val = a / b; break;
+        }
+
+        stack[++top] = val;
+        i++;
+    }
+
+    *result = stack[top];
+}
+
+
+int main() {
+    char infix[MAX];
+
+    printf("> ");
+    fgets(infix, MAX, stdin);
+
+    char postfix[MAX];
     infixToPostfix(infix, postfix);
     printf("Postfix = %s\n", postfix);
+
+    int res;
+    calculate(postfix, &res);
+    printf("Resultat: %d\n", res);
 
     return 0;
 }
