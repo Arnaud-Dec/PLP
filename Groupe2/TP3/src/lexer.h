@@ -4,10 +4,7 @@
 // Types de tokens possibles
 typedef enum {
     TOKEN_NUMBER,      // Nombre (entier ou réel)
-    TOKEN_PLUS,        // +
-    TOKEN_MINUS,       // -
-    TOKEN_MULTIPLY,    // *
-    TOKEN_DIVIDE,      // /
+    TOKEN_OPERATOR,    // Opérateur (+, -, *, /)
     TOKEN_END,         // Fin de l'expression
     TOKEN_ERROR        // Erreur de syntaxe
 } TokenType;
@@ -16,6 +13,7 @@ typedef enum {
 typedef struct {
     TokenType type;
     double value;      // Pour les nombres
+    char operator;     // Pour les opérateurs (+, -, *, /)
 } Token;
 
 // Structure pour gérer l'état du lexer
@@ -27,6 +25,5 @@ typedef struct {
 // Fonctions du lexer
 void lexer_init(Lexer* lexer, const char* input);
 Token lexer_next_token(Lexer* lexer);
-Token lexer_peek_token(Lexer* lexer);  // Regarde le prochain token sans avancer
 
 #endif

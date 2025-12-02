@@ -1,85 +1,84 @@
 #include "parseur.h"
 #include <stdio.h>
 
-// Initialise le parseur
-void parser_init(Parser* parser, Lexer* lexer) {
-    parser->lexer = lexer;
-    parser->has_error = 0;
-    parser->current_token = lexer_next_token(lexer);
-}
-
-// Avance au token suivant
-static void parser_advance(Parser* parser) {
-    parser->current_token = lexer_next_token(parser->lexer);
-}
-
-// Vérifie s'il y a une erreur
-int parser_has_error(Parser* parser) {
-    return parser->has_error;
-}
-
-// Parse un nombre (facteur)
-static double parser_parse_factor(Parser* parser) {
-    if (parser->current_token.type == TOKEN_NUMBER) {
-        double value = parser->current_token.value;
-        parser_advance(parser);
-        return value;
+// Parse une expression de la forme "A opérateur B"
+Expression parser_parse(const char* input) {
+    Expression expr;
+    expr.valide = 0;  // Par défaut, non valide
+    
+    // Initialise le lexer
+    Lexer lexer;
+    lexer_init(&lexer, input);
+    
+    // Étape 1 : Lire le premier nombre (opérande 1)
+    Token token1 = lexer_next_token(&lexer);
+    
+    if (token1.type == TOKEN_ERROR) {
+        printf("Erreur : Caractère non autorisé dans l'expression\n");
+        return expr;
     }
     
-    printf("Erreur : Nombre attendu\n");
-    parser->has_error = 1;
-    return 0.0;
+    if (token1.type != TOKEN_NUMBER) {
+        printf("Erreur : Premier opérande manquant ou invalide\n");
+        return expr;
+    }
+    expr.operande1 = token1.value;
+    
+    // Étape 2 : Lire l'opérateur
+    Token token_op = lexer_next_token(&lexer);
+    
+    if (token_op.type == TOKEN_ERROR) {
+        printf("Erreur : Caractère non autorisé dans l'expression\n");
+        return expr;
+    }
+    
+    if (token_op.type != TOKEN_OPERATOR) {
+        printf("Erreur : Opérateur manquant ou invalide (attendu +, -, *, /)\n");
+        return expr;
+    }
+    expr.operation = token_op.operator;
+    
+    // Étape 3 : Lire le deuxième nombre (opérande 2)
+    Token token2 = lexer_next_token(&lexer);
+    
+    if (token2.type == TOKEN_ERROR) {
+        printf("Erreur : Caractère non autorisé dans l'expression\n");
+        return expr;
+    }
+    
+    if (token2.type != TOKEN_NUMBER) {
+        printf("Erreur : Deuxième opérande manquant ou invalide\n");
+        return expr;
+    }
+    expr.operande2 = token2.value;
+    
+    // Étape 4 : Vérifier qu'il n'y a rien d'autre après
+    Token token_end = lexer_next_token(&lexer);
+    
+    if (token_end.type == TOKEN_ERROR) {
+        printf("Erreur : Caractère non autorisé à la fin de l'expression\n");
+        return expr;
+    }
+    
+    if (token_end.type != TOKEN_END) {
+        printf("Erreur : Caractères supplémentaires après l'expression (format attendu: A opérateur B)\n");
+        return expr;
+    }
+    
+    // Tout est bon !
+    expr.valide = 1;
+    return expr;
 }
 
-// Parse la multiplication et la division (priorité haute)
-static double parser_parse_term(Parser* parser) {
-    double left = parser_parse_factor(parser);
-    
-    while (parser->current_token.type == TOKEN_MULTIPLY || 
-           parser->current_token.type == TOKEN_DIVIDE) {
-        
-        TokenType op = parser->current_token.type;
-        parser_advance(parser);
-        double right = parser_parse_factor(parser);
-        
-        if (op == TOKEN_MULTIPLY) {
-            left = left * right;
-        } else {
-            if (right == 0.0) {
-                printf("Erreur : Division par zéro\n");
-                parser->has_error = 1;
-                return 0.0;
-            }
-            left = left / right;
-        }
+// Affiche l'expression parsée
+void parser_afficher_expression(Expression expr) {
+    if (!expr.valide) {
+        printf("Expression invalide\n");
+        return;
     }
     
-    return left;
-}
-
-// Parse l'addition et la soustraction (priorité basse)
-double parser_parse_expression(Parser* parser) {
-    double left = parser_parse_term(parser);
-    
-    while (parser->current_token.type == TOKEN_PLUS || 
-           parser->current_token.type == TOKEN_MINUS) {
-        
-        TokenType op = parser->current_token.type;
-        parser_advance(parser);
-        double right = parser_parse_term(parser);
-        
-        if (op == TOKEN_PLUS) {
-            left = left + right;
-        } else {
-            left = left - right;
-        }
-    }
-    
-    // Vérifier qu'on a bien atteint la fin
-    if (parser->current_token.type != TOKEN_END) {
-        printf("Erreur : Caractères inattendus à la fin de l'expression\n");
-        parser->has_error = 1;
-    }
-    
-    return left;
+    printf("Représentation interne :\n");
+    printf("  opération  : %c\n", expr.operation);
+    printf("  opérande 1 : %g\n", expr.operande1);
+    printf("  opérande 2 : %g\n", expr.operande2);
 }

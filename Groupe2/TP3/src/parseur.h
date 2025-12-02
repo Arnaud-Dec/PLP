@@ -3,16 +3,18 @@
 
 #include "lexer.h"
 
-// Structure pour le parseur
+// Structure représentant une expression simple (A opérateur B)
 typedef struct {
-    Lexer* lexer;
-    Token current_token;
-    int has_error;
-} Parser;
+    double operande1;    // Premier nombre (A)
+    char operation;      // Opérateur (+, -, *, /)
+    double operande2;    // Deuxième nombre (B)
+    int valide;          // 1 si l'expression est valide, 0 sinon
+} Expression;
 
-// Fonctions du parseur
-void parser_init(Parser* parser, Lexer* lexer);
-double parser_parse_expression(Parser* parser);
-int parser_has_error(Parser* parser);
+// Fonction principale du parseur
+Expression parser_parse(const char* input);
+
+// Fonction pour afficher l'expression (utile pour déboguer)
+void parser_afficher_expression(Expression expr);
 
 #endif

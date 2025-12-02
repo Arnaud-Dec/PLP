@@ -19,6 +19,11 @@ static void skip_whitespace(Lexer* lexer) {
     }
 }
 
+// Vérifie si un caractère est un opérateur valide
+static int is_operator(char c) {
+    return (c == '+' || c == '-' || c == '*' || c == '/');
+}
+
 // Lit un nombre (entier ou réel)
 static Token read_number(Lexer* lexer) {
     Token token;
@@ -73,34 +78,14 @@ Token lexer_next_token(Lexer* lexer) {
     }
     
     // Si c'est un opérateur
-    switch(current) {
-        case '+':
-            token.type = TOKEN_PLUS;
-            lexer->position++;
-            return token;
-        case '-':
-            token.type = TOKEN_MINUS;
-            lexer->position++;
-            return token;
-        case '*':
-            token.type = TOKEN_MULTIPLY;
-            lexer->position++;
-            return token;
-        case '/':
-            token.type = TOKEN_DIVIDE;
-            lexer->position++;
-            return token;
+    if (is_operator(current)) {
+        token.type = TOKEN_OPERATOR;
+        token.operator = current;
+        lexer->position++;
+        return token;
     }
     
     // Caractère non reconnu = erreur
     token.type = TOKEN_ERROR;
-    return token;
-}
-
-// Regarde le prochain token sans avancer
-Token lexer_peek_token(Lexer* lexer) {
-    int saved_position = lexer->position;
-    Token token = lexer_next_token(lexer);
-    lexer->position = saved_position;
     return token;
 }
