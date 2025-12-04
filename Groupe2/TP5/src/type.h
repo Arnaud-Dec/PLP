@@ -2,9 +2,9 @@
 #define TYPE_H
 
 typedef enum {
-    FLOAT,
-    INT,
-    STRING
+    TYPE_FLOAT,
+    TYPE_INT,
+    TYPE_STRING
 } Type;
 
 #endif

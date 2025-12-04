@@ -5,7 +5,7 @@
 
 typedef struct {
     char name[30];
-    Type type;   // <-- juste "Type", pas "enum Type"
+    Type type;  
     char *data;
 } Var;
 
