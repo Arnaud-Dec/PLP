@@ -149,8 +149,32 @@ void free_variables(Var* tab_var, int count) {
     }
 }
 
+fun_lambda(const char* input, Var* tab_var, int* var_count){
+    char expr[MAX_BUFFER];
+
+    int i = 7;
+    int j = 0;
+    while(input[i] != ')'){
+        expr[j++] = input[i++];
+    }
+
+    expr[++j] = '\0';
+    
+
+}
+
 // Retourne 1 si c'est une affectation traitée, 0 sinon
 int process_assignment(const char* input, Var* tab_var, int* var_count) {
+
+    // for input 
+    // verifi si les 7 premier caractère = (lambda
+    // passe fonction lambda
+
+    char test_lambda[] = "(lambda";
+    if(strncmp(input,test_lambda,strlen,(test_lambda)) == 0){
+        fun_lambda(input,tab_var,var_count)
+    }
+    
     const char* eq_pos = strchr(input, '=');
     if (!eq_pos) return 0; 
 
