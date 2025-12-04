@@ -142,9 +142,25 @@ int checkVar(const char* input, Var* tab_var, int* var_tab_len){
         strcpy(var.data, value);
         var.type = INT;
     }
-    tab_var[*var_tab_len] = var;
-    (*var_tab_len)++;
+    int len = *var_tab_len;
+    for(int var_index = 0; var_index < len || *var_tab_len == 0; var_index++){
+        if(strcmp(tab_var[var_index].name, var.name) == 0){
+            if(tab_var[var_index].type == var.type){
+                free(tab_var[var_index].data);
+                tab_var[var_index].data = malloc(strlen(var.data) + 1);
+                strcpy( tab_var[var_index].data, var.data);
+                break;
+            }else{
+                printf("Erreur : changement de type non autorisé pour la variable %s\n" , var.name);
+                return 2;
+            }
 
+        }else{
+            tab_var[*var_tab_len] = var;
+            (*var_tab_len)++;
+            break;
+        }
+    }
     return 1; // It's a variable assignment
 }
 
@@ -153,32 +169,44 @@ int main() {
     int tab_var_len = 0;
     Var tab_var[10];
 
-    printf("> ");
-    fgets(input, MAX, stdin);
+    while(1) { 
+        printf("> ");
+        fgets(input, MAX, stdin);
+        input[strcspn(input, "\n")] = '\0';
 
-    if(!checkVar(input, tab_var, &tab_var_len)) {
-        char postfix[MAX];
-        infixToPostfix(input, postfix);
-        printf("Postfix = %s\n", postfix);
+        for(int i = 0; i < tab_var_len; i++) {
+            if (strcmp(tab_var[i].name, input) == 0) {
+                printf("Variable %s definie avec la valeur %s\n", input, tab_var[i].data);
+                continue;
+            }
+        }
 
-        int res;
-        calculate(postfix, &res);
-        printf("Resultat: %d\n", res);
+        if(!checkVar(input, tab_var, &tab_var_len)) {
+            char postfix[MAX];
+            infixToPostfix(input, postfix);
+            printf("Postfix = %s\n", postfix);
+
+            int res;
+            calculate(postfix, &res);
+            printf("Resultat: %d\n", res);
+        }
+
+        for(int i = 0; i < tab_var_len; i++) {
+            printf("%s: %s", tab_var[i].name, tab_var[i].data);
+
+            switch(tab_var[i].type) {
+                case INT:    printf(" (INT)"); break;
+                case FLOAT:  printf(" (FLOAT)"); break;
+                case STRING: printf(" (STRING)"); break;
+                default:     printf(" (UNKNOWN)"); break;
+            }
+
+            printf("\n");
+        }
     }
 
     for(int i = 0; i < tab_var_len; i++) {
-    printf("%s: %s", tab_var[i].name, tab_var[i].data);
-
-    // print type
-        switch(tab_var[i].type) {
-            case INT:    printf(" (INT)"); break;
-            case FLOAT:  printf(" (FLOAT)"); break;
-            case STRING: printf(" (STRING)"); break;
-            default:     printf(" (UNKNOWN)"); break;
-        }
-
-    printf("\n");
-    free(tab_var[i].data);
+        free(tab_var[i].data);
     }
     return 0;
 }
