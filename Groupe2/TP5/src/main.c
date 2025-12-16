@@ -220,23 +220,37 @@ int fun_lambda(const char* input, Var* tab_var, int* var_count){
     }
     var[w] = '\0';
 
-    //printf("valeur %s\n" , var);
-
-
     //check if var is var in tab_var
 
+    int is_var = 0;
     int z = 0;
 
     while (z < *var_count) 
         {
             if (strcmp(var, tab_var[z].name) == 0) {
                 strcpy(var, tab_var[z].data); 
-                printf("tab_var : %s\n",tab_var[z].data);
-                printf("var : %s\n", var);
+                is_var = 1;
                 break; 
             }
             z++; 
         }
+    
+    if (!is_var)
+    {
+        for (size_t i = 0; i < strlen(var); i++)
+        {
+            if(!isdigit(var[i])){
+                printf("Erreur : la variable %s n'est pas définie \n" , var);
+                return -1;
+            }
+        }
+        
+    }
+    
+    
+
+
+    
 
     int y = 0;
 
