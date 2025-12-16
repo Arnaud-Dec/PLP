@@ -2,23 +2,12 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include "type.h"
+#include "var.h"
 // --- DEFINITIONS (remplace var.h et type.h pour la compilation) ---
 
 #define MAX_BUFFER 256
 #define MAX_VARS 50
-
-typedef enum {
-    TYPE_INT,
-    TYPE_FLOAT,
-    TYPE_STRING
-} Type;
-
-typedef struct {
-    char name[30];
-    char* data;
-    Type type;
-} Var;
 
 // --- UTILITAIRES ---
 
