@@ -2,12 +2,23 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-#include "var.h"
-#include "type.h"
 
-#define MAX_BUFFER 100
+// --- DEFINITIONS (remplace var.h et type.h pour la compilation) ---
+
+#define MAX_BUFFER 256
 #define MAX_VARS 50
 
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+} Type;
+
+typedef struct {
+    char name[30];
+    char* data;
+    Type type;
+} Var;
 
 // --- UTILITAIRES ---
 
@@ -17,7 +28,6 @@ char* safe_strdup(const char* s) {
     return p;
 }
 
-// Renvoie le libellé exact demandé dans l'exemple
 const char* get_type_label(Type t) {
     switch (t) {
         case TYPE_INT:    return "entier";
@@ -27,7 +37,7 @@ const char* get_type_label(Type t) {
     }
 }
 
-// --- CALCULATEUR (INT) ---
+// --- CALCULATEUR (Pile et Evaluation) ---
 
 int get_precedence(char op) {
     if (op == '+' || op == '-') return 1;
@@ -39,10 +49,10 @@ int is_operator(char c) {
     return (c == '+' || c == '-' || c == '*' || c == '/');
 }
 
-// Vérifie si une chaîne ressemble à une opération mathématique (+, -, *, / ou nombre)
 int is_math_expression(const char* str) {
     for (int i = 0; str[i] != '\0'; i++) {
-        if (is_operator(str[i]) || isdigit(str[i])) return 1;
+        // On accepte chiffres, opérateurs ou parenthèses
+        if (is_operator(str[i]) || isdigit(str[i]) || str[i] == '(') return 1;
     }
     return 0;
 }
@@ -57,7 +67,7 @@ void infix_to_postfix(const char *infix, char *postfix) {
         if (c == ' ') continue;
 
         if (isdigit(c)) {
-            while (isdigit(infix[i])) {
+            while (isdigit(infix[i]) || infix[i] == '.') { // Support basique float parsing (ignoré au calcul int)
                 postfix[j++] = infix[i++];
             }
             postfix[j++] = ' ';
@@ -149,144 +159,91 @@ void free_variables(Var* tab_var, int count) {
     }
 }
 
-int cont_par(const char* input){
-    int nb_par = 0;
+// --- LOGIQUE LAMBDA (Refactorisée) ---
 
-    int nb_par_left = 0;
-    int nb_par_right = 0;
+// Cette fonction prend l'input brut (ex: "(lambda x.x+2) 3")
+// et remplit `final_expr` avec l'expression résolue (ex: "3+2")
+// Retourne 1 si succès, 0 si échec
+int resolve_lambda(const char* input, Var* tab_var, int var_count, char* final_expr) {
+    
+    // 1. Parsing structurel
+    const char* ptr = input;
+    
+    // Vérification préfixe
+    if (strncmp(ptr, "(lambda", 7) != 0) return 0;
+    
+    // Trouver le point '.' qui sépare la variable du corps
+    const char* dot_pos = strchr(ptr, '.');
+    if (!dot_pos) return 0;
 
-    int i = 0;
+    // Trouver la parenthèse fermante de la lambda
+    // On cherche la parenthèse correspondante (simplification: la première fermante après le point)
+    // Note: Pour une vraie gestion imbriquée, il faudrait un compteur de parenthèses.
+    const char* close_par = strrchr(ptr, ')'); // On prend la dernière pour englober l'expression
+    if (!close_par || close_par < dot_pos) return 0;
 
-    while (input[i] != '\0')
-    {
-        if (input[i] == '(')
-        {
-           nb_par_left++;
+    // 2. Extraire le corps de la fonction (entre . et ))
+    char body[MAX_BUFFER];
+    int len_body = close_par - (dot_pos + 1);
+    strncpy(body, dot_pos + 1, len_body);
+    body[len_body] = '\0';
+
+    // 3. Extraire l'argument (après la parenthèse fermante)
+    const char* arg_start = close_par + 1;
+    while (*arg_start == ' ') arg_start++; // Skip spaces
+    
+    char arg_val[MAX_BUFFER];
+    
+    // L'argument est-il un nombre ou une variable ?
+    int is_number = 1;
+    for(int k=0; k<strlen(arg_start); k++) {
+        if(!isdigit(arg_start[k]) && arg_start[k] != '\0' && arg_start[k] != '\n') {
+            is_number = 0; break;
         }
-        else if (input[i] == ')')
-        {
-            nb_par_right++;
-        }
+    }
+
+    if (is_number && strlen(arg_start) > 0) {
+        strcpy(arg_val, arg_start);
+    } else {
+        // C'est une variable, on la cherche
+        char var_name[30];
+        strncpy(var_name, arg_start, 29);
+        var_name[strcspn(var_name, " \n")] = '\0'; // Trim
         
-        i++;
-    };
-
-    if(nb_par_left == nb_par_right){
-        return nb_par_left;
-    }else{
-        printf("Problème nombre de parenthèse ouvrante et fermente différente \n");
-        return -1;
-    }
-}
-
-int fun_lambda(const char* input, Var* tab_var, int* var_count){
-
-    //todo mette var dans lambda test
-
-    char expr[MAX_BUFFER];
-    char var [MAX_BUFFER];
-    char final_expr[MAX_BUFFER];
-    int nb_par = cont_par(input);
-
-    int i = 10;
-    int j = 0;
-
-    if(nb_par == -1){
-        return -1;
-    }else{
-
-        while(nb_par > 0){
-            if (input[i] == ')'){
-                nb_par--;
-                if(nb_par > 0){
-                    expr[j++] = input[i++];
-                }
-            }
-            else{
-                expr[j++] = input[i++];
-            } 
+        int idx = find_variable_index(tab_var, var_count, var_name);
+        if (idx == -1) {
+            printf("Erreur : la variable argument '%s' n'est pas définie\n", var_name);
+            return 0;
         }
-
-        expr[j] = '\0';
-
-        //printf("expression %s\n", expr);
-    }    
-
-    int w =0;
-    i+=2 ; // enléve parhentèse + espace
-
-    while(input[i] != '\0') {
-    var[w++] = input[i++];
+        strcpy(arg_val, tab_var[idx].data);
     }
-    var[w] = '\0';
 
-    //check if var is var in tab_var
+    // Nettoyer l'argument (enlever saut de ligne éventuel)
+    arg_val[strcspn(arg_val, "\n")] = '\0';
 
-    int is_var = 0;
-    int z = 0;
-
-    while (z < *var_count) 
-        {
-            if (strcmp(var, tab_var[z].name) == 0) {
-                strcpy(var, tab_var[z].data); 
-                is_var = 1;
-                break; 
-            }
-            z++; 
-        }
-    
-    if (!is_var)
-    {
-        for (size_t i = 0; i < strlen(var); i++)
-        {
-            if(!isdigit(var[i])){
-                printf("Erreur : la variable %s n'est pas définie \n" , var);
-                return -1;
-            }
-        }
-        
-    }
-    
-    
-
-
-    
-
+    // 4. Substitution : Remplacer 'x' par arg_val dans body
+    // Simplification : on suppose que la variable lambda est 'x' comme demandé dans le TP
     int y = 0;
-
-    for(int k = 0; k < j ; k++){
-        if (expr[k] == 'x'){
-            for(int m = 0; m < strlen(var); m++) {
-                final_expr[y++] = var[m];
+    for (int k = 0; body[k] != '\0'; k++) {
+        if (body[k] == 'x') {
+            // On vérifie que c'est bien la variable x et pas une partie d'un mot (ex: 'max')
+            // Ici context TP math simple : on assume x est la variable.
+            for (int m = 0; m < strlen(arg_val); m++) {
+                final_expr[y++] = arg_val[m];
             }
-        }else{
-            final_expr[y++] = expr[k]; 
+        } else {
+            final_expr[y++] = body[k];
         }
     }
-    
     final_expr[y] = '\0';
 
-    printf("final : %s\n", final_expr);
-
-    
-    
-
+    // printf("Debug Lambda résolue : %s\n", final_expr); // Décommenter pour debug
     return 1;
-
 }
 
-// Retourne 1 si c'est une affectation traitée, 0 sinon
+// --- GESTION AFFECTATION ---
+
 int process_assignment(const char* input, Var* tab_var, int* var_count) {
-
-    // for input 
-    // verifi si les 7 premier caractère = (lambda
-    // passe fonction lambda
-
-    char test_lambda[] = "(lambda x.";
-    if(strncmp(input,test_lambda,strlen(test_lambda)) == 0){
-        fun_lambda(input,tab_var,var_count);
-    }
-    
     const char* eq_pos = strchr(input, '=');
     if (!eq_pos) return 0; 
 
@@ -322,6 +279,9 @@ int process_assignment(const char* input, Var* tab_var, int* var_count) {
         new_var.type = TYPE_STRING;
     } else {
         new_var.data = safe_strdup(val_start);
+        // Nettoyage saut de ligne
+        new_var.data[strcspn(new_var.data, "\n")] = '\0';
+
         if (strchr(val_start, '.')) {
             new_var.type = TYPE_FLOAT;
         } else {
@@ -333,24 +293,19 @@ int process_assignment(const char* input, Var* tab_var, int* var_count) {
     int idx = find_variable_index(tab_var, *var_count, new_var.name);
 
     if (idx != -1) {
-        // Variable existe déjà : check type
         if (tab_var[idx].type != new_var.type) {
             printf("Erreur : changement de type non autorisé pour la variable %s\n", new_var.name);
             free(new_var.data);
             return 1; 
         }
-        // Mise à jour OK
         free(tab_var[idx].data);
         tab_var[idx].data = new_var.data;
-        // FORMAT SORTIE DEMANDÉ
         printf("Variable %s définie avec la valeur %s (%s)\n", 
                new_var.name, new_var.data, get_type_label(new_var.type));
     } else {
-        // Nouvelle variable
         if (*var_count < MAX_VARS) {
             tab_var[*var_count] = new_var;
             (*var_count)++;
-            // FORMAT SORTIE DEMANDÉ
             printf("Variable %s définie avec la valeur %s (%s)\n", 
                    new_var.name, new_var.data, get_type_label(new_var.type));
         } else {
@@ -369,6 +324,8 @@ int main() {
     Var tab_var[MAX_VARS];
     int var_count = 0;
 
+    printf("Interpreteur demarre. (Ctrl+C pour quitter)\n");
+
     while(1) { 
         printf("> ");
         if (!fgets(input, MAX_BUFFER, stdin)) break;
@@ -376,40 +333,55 @@ int main() {
         input[strcspn(input, "\n")] = '\0'; 
         if (strlen(input) == 0) continue;
 
-        // 1. Affectation (ex: x = 4)
-        if (process_assignment(input, tab_var, &var_count)) {
-            continue;
+        // --- 1. Gestion Lambda ---
+        // On vérifie d'abord si c'est une lambda
+        if (strncmp(input, "(lambda", 7) == 0) {
+            char expression_resolue[MAX_BUFFER];
+            
+            // On transforme la lambda en expression mathématique simple (ex: "3 + 2 * 3")
+            if (resolve_lambda(input, tab_var, var_count, expression_resolue)) {
+                // Si la résolution a marché, on calcule le résultat
+                char postfix[MAX_BUFFER];
+                int result;
+                infix_to_postfix(expression_resolue, postfix);
+                if (evaluate_postfix(postfix, &result)) {
+                    printf("%d\n", result);
+                } else {
+                    printf("Erreur lors du calcul de l'expression lambda.\n");
+                }
+            }
+            continue; // On passe à la boucle suivante
         }
 
-        // 2. Affichage Variable existante (ex: x)
-        // On vérifie d'abord si c'est une variable connue
+        // --- 2. Affectation (ex: x = 4) ---
+        if (strchr(input, '=') != NULL) {
+            if (process_assignment(input, tab_var, &var_count)) {
+                continue;
+            }
+        }
+
+        // --- 3. Affichage Variable existante (ex: x) ---
         int idx = find_variable_index(tab_var, var_count, input);
         if (idx != -1) {
-            // FORMAT SORTIE "Variable = Valeur" ou juste la valeur ?
-            // Votre exemple ne montre pas le cas "x" si x existe, 
-            // mais on suppose qu'on affiche la valeur.
             printf("%s = %s\n", tab_var[idx].name, tab_var[idx].data);
             continue;
         }
 
-        // 3. Variable INCONNUE (ex: y)
-        // Si ce n'est pas une expression mathématique (pas de chiffres/opérateurs)
-        // et qu'on ne l'a pas trouvée à l'étape 2, c'est une erreur de variable.
-        if (!is_math_expression(input)) {
-             printf("Erreur : la variable %s n'est pas définie\n", input);
-             continue;
-        }
-
-        // 4. Calcul Mathématique
-        char postfix[MAX_BUFFER];
-        int result;
-        
-        infix_to_postfix(input, postfix);
-        if (evaluate_postfix(postfix, &result)) {
-            printf("Resultat: %d\n", result);
+        // --- 4. Calcul Mathématique Standard ---
+        // Si ce n'est pas une affectation, ni une variable connue, on essaie de calculer
+        if (is_math_expression(input)) {
+            char postfix[MAX_BUFFER];
+            int result;
+            
+            infix_to_postfix(input, postfix);
+            if (evaluate_postfix(postfix, &result)) {
+                printf("%d\n", result);
+            } else {
+                printf("Erreur de syntaxe ou calcul impossible.\n");
+            }
         } else {
-            // Cas fallback
-            printf("Commande inconnue.\n");
+             // Si tout le reste a échoué
+             printf("Erreur : la variable %s n'est pas définie ou commande inconnue\n", input);
         }
     }
 
