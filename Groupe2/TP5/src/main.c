@@ -149,6 +149,36 @@ void free_variables(Var* tab_var, int count) {
     }
 }
 
+int cont_par(const char* input){
+    int nb_par = 0;
+
+    int nb_par_left = 0;
+    int nb_par_right = 0;
+
+    int i = 0;
+
+    while (input[i] != '\0')
+    {
+        if (input[i] == '(')
+        {
+           nb_par_left++;
+        }
+        else if (input[i] == ')')
+        {
+            nb_par_right++;
+        }
+        
+        i++;
+    };
+
+    if(nb_par_left == nb_par_right){
+        return nb_par_left;
+    }else{
+        printf("Problème nombre de parenthèse ouvrante et fermente différente \n");
+        return -1;
+    }
+}
+
 int fun_lambda(const char* input, Var* tab_var, int* var_count){
 
     //todo mette var dans lambda test
@@ -156,16 +186,31 @@ int fun_lambda(const char* input, Var* tab_var, int* var_count){
     char expr[MAX_BUFFER];
     char var [MAX_BUFFER];
     char final_expr[MAX_BUFFER];
+    int nb_par = cont_par(input);
 
     int i = 10;
     int j = 0;
-    while(input[i] != ')' ){
-        expr[j++] = input[i++];
-    }
 
-    expr[j] = '\0';
+    if(nb_par == -1){
+        return -1;
+    }else{
 
-    printf("expression %s\n", expr);
+        while(nb_par > 0){
+            if (input[i] == ')'){
+                nb_par--;
+                if(nb_par > 0){
+                    expr[j++] = input[i++];
+                }
+            }
+            else{
+                expr[j++] = input[i++];
+            } 
+        }
+
+        expr[j] = '\0';
+
+        //printf("expression %s\n", expr);
+    }    
 
     int w =0;
     i+=2 ; // enléve parhentèse + espace
@@ -175,13 +220,29 @@ int fun_lambda(const char* input, Var* tab_var, int* var_count){
     }
     var[w] = '\0';
 
-    printf("valeur %s\n" , var);
+    //printf("valeur %s\n" , var);
+
+
+    //check if var is var in tab_var
+
+    int z = 0;
+
+    while (z < *var_count) 
+        {
+            if (strcmp(var, tab_var[z].name) == 0) {
+                strcpy(var, tab_var[z].data); 
+                printf("tab_var : %s\n",tab_var[z].data);
+                printf("var : %s\n", var);
+                break; 
+            }
+            z++; 
+        }
 
     int y = 0;
 
     for(int k = 0; k < j ; k++){
         if (expr[k] == 'x'){
-            for(int m = 0; m < w; m++) {
+            for(int m = 0; m < strlen(var); m++) {
                 final_expr[y++] = var[m];
             }
         }else{
@@ -192,6 +253,9 @@ int fun_lambda(const char* input, Var* tab_var, int* var_count){
     final_expr[y] = '\0';
 
     printf("final : %s\n", final_expr);
+
+    
+    
 
     return 1;
 
