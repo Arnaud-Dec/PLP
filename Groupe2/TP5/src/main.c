@@ -149,17 +149,51 @@ void free_variables(Var* tab_var, int count) {
     }
 }
 
-fun_lambda(const char* input, Var* tab_var, int* var_count){
-    char expr[MAX_BUFFER];
+int fun_lambda(const char* input, Var* tab_var, int* var_count){
 
-    int i = 7;
+    //todo mette var dans lambda test
+
+    char expr[MAX_BUFFER];
+    char var [MAX_BUFFER];
+    char final_expr[MAX_BUFFER];
+
+    int i = 10;
     int j = 0;
-    while(input[i] != ')'){
+    while(input[i] != ')' ){
         expr[j++] = input[i++];
     }
 
-    expr[++j] = '\0';
+    expr[j] = '\0';
+
+    printf("expression %s\n", expr);
+
+    int w =0;
+    i+=2 ; // enléve parhentèse + espace
+
+    while(input[i] != '\0') {
+    var[w++] = input[i++];
+    }
+    var[w] = '\0';
+
+    printf("valeur %s\n" , var);
+
+    int y = 0;
+
+    for(int k = 0; k < j ; k++){
+        if (expr[k] == 'x'){
+            for(int m = 0; m < w; m++) {
+                final_expr[y++] = var[m];
+            }
+        }else{
+            final_expr[y++] = expr[k]; 
+        }
+    }
     
+    final_expr[y] = '\0';
+
+    printf("final : %s\n", final_expr);
+
+    return 1;
 
 }
 
@@ -170,9 +204,9 @@ int process_assignment(const char* input, Var* tab_var, int* var_count) {
     // verifi si les 7 premier caractère = (lambda
     // passe fonction lambda
 
-    char test_lambda[] = "(lambda";
-    if(strncmp(input,test_lambda,strlen,(test_lambda)) == 0){
-        fun_lambda(input,tab_var,var_count)
+    char test_lambda[] = "(lambda x.";
+    if(strncmp(input,test_lambda,strlen(test_lambda)) == 0){
+        fun_lambda(input,tab_var,var_count);
     }
     
     const char* eq_pos = strchr(input, '=');
