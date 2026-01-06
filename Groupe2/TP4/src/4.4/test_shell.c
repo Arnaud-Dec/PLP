@@ -102,6 +102,15 @@ int main() {
     run_test("Priorité (simple)",     "calculer 10 / 2",        "5");
     run_test("Erreur syntaxe",        "calc 2 +",               "Erreur");
 
+
+    // --- Exercice 4 (TP4) : Priorités et Parenthèses ---
+    printf("\n%s--- TP4 : Expressions Complexes ---%s\n", COLOR_BLUE, COLOR_RESET);
+    run_test("Priorité Opératoire (* > +)", "calc 3 + 4 * 5",   "23");
+    run_test("Parenthèses simples",         "calc (3 + 4) * 5", "35");
+    run_test("Parenthèses complexes",       "calc (10 + 2) / (4 - 1)", "4");
+    run_test("Décimaux + Priorité",         "calc 10 - 2.5 * 2", "5");
+    run_test("Calcul complexe (FR)",        "calculer 2 * (3 + 2)", "10");
+
     // Nettoyage final
     cleanup();
     

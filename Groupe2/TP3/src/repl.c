@@ -147,7 +147,7 @@ int main()
         {"version", "version", afficher_version},
         {"help", "aide", afficher_aide},
         {"date", "date", traiter_date},
-        {"calc", "calculer", traiter_calcul}  // NOUVELLE COMMANDE
+        {"calc", "calculer", traiter_calcul} 
     };
     
     printf("=== Interpréteur de commandes ===\n");

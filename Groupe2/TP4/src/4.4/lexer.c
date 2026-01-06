@@ -84,6 +84,19 @@ Token lexer_next_token(Lexer* lexer) {
         lexer->position++;
         return token;
     }
+
+    if (current == '(') {
+        token.type = TOKEN_LPAREN;
+        token.operator = '(';
+        lexer->position++;
+        return token;
+    }
+    if (current == ')') {
+        token.type = TOKEN_RPAREN;
+        token.operator = ')';
+        lexer->position++;
+        return token;
+    }
     
     // Caractère non reconnu = erreur
     token.type = TOKEN_ERROR;

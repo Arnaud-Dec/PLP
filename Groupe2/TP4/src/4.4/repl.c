@@ -3,9 +3,8 @@
 #include <time.h>
 #include <ctype.h>
 #include "function.h"
+#include "arithmetic.h"
 #include "lexer.h"
-#include "parseur.h"
-#include "evaluation.h"
 
 /**
  * Programme qui simule un interpréteur de commandes simple.
@@ -100,21 +99,18 @@ void traiter_calcul(char* commande, int fr) {
         expression = commande + 9; // Sauter "calculer "
     }
     
-    // Parser l'expression
-    Expression expr = parser_parse(expression);
-    
-    if (expr.valide) {
-        // Évaluer l'expression
-        ResultatEvaluation res = evaluer_expression(expr);
-        
-        if (res.valide) {
-            printf("%g\n", res.resultat);
-        }
-        else {
-            printf("%s\n", res.erreur);
-        }
+    char postfix[1024];
+    double resultat;
+
+    // 1. Conversion Infixe -> Postfixe
+    infixToPostfix(expression, postfix);
+
+    // 2. Évaluation
+    if (calculate(postfix, &resultat)) {
+        printf("%g\n", resultat);
+    } else {
+        printf("Erreur lors du calcul (Syntaxe ou Div/0)\n");
     }
-    // Les erreurs de parsing sont déjà affichées par parser_parse()
 }
 
 void normaliser_cmd(char* dest, const char* src) {
@@ -147,7 +143,7 @@ int main()
         {"version", "version", afficher_version},
         {"help", "aide", afficher_aide},
         {"date", "date", traiter_date},
-        {"calc", "calculer", traiter_calcul}  // NOUVELLE COMMANDE
+        {"calc", "calculer", traiter_calcul}
     };
     
     printf("=== Interpréteur de commandes ===\n");
