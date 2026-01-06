@@ -175,16 +175,23 @@ int main()
 
         for (int i = 0; i < nb_cmd; i++) {
             fr = 0;
-            if (strncmp(cmd, table_f[i].name, strlen(table_f[i].name)) == 0) {
+            int len_en = strlen(table_f[i].name);
+            int len_fr = strlen(table_f[i].name_fr);
+            // Vérification stricte ANGLAIS 
+            if (strncmp(cmd, table_f[i].name, len_en) == 0 && 
+               (cmd[len_en] == ' ' || cmd[len_en] == '\0')) {
+                
                 table_f[i].func(commande, fr);
                 find_f = 1;
-                break;  // Sortir après avoir trouvé la commande
+                break;
             }
-            else if (strncmp(cmd, table_f[i].name_fr, strlen(table_f[i].name_fr)) == 0) {
+            // Vérification stricte FRANÇAIS
+            else if (strncmp(cmd, table_f[i].name_fr, len_fr) == 0 && 
+                    (cmd[len_fr] == ' ' || cmd[len_fr] == '\0')) {
                 fr = 1;
                 table_f[i].func(commande, fr);
                 find_f = 1;
-                break;  // Sortir après avoir trouvé la commande
+                break;
             }
         }
 
