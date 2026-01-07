@@ -1,3 +1,14 @@
+/**
+ * Nom du fichier : main.c (Version TP4 - Calculatrice)
+ * Objectif       : Programme autonome testant la logique mathématique du TP4.
+ * Regroupe dans un seul fichier :
+ * - La conversion d'expressions Infixe vers Postfixe (Shunting-yard).
+ * - L'évaluation des expressions Postfixées (RPN).
+ * - Le main pour lire et traiter une expression utilisateur.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
