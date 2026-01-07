@@ -9,8 +9,6 @@
 * cours d'introduction
 * Google Gemini
 * connaissance directe
-* stackoverflow
-* https://gcc.gnu.org/onlinedocs
 * https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 
 # Difficulté
