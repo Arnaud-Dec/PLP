@@ -56,7 +56,7 @@ int var_process_assignment(const char* command) {
     const char* eq_pos = strchr(command, '=');
     if (!eq_pos) return 0;
 
-    // 1. Nom
+    // 1. Nom (Partie gauche)
     int name_len = eq_pos - command;
     char name[50];
     if (name_len >= 50) name_len = 49;
@@ -71,17 +71,41 @@ int var_process_assignment(const char* command) {
     while(*start && isspace(*start)) start++;
     if (*start == '\0') return 0;
 
-    // 2. Valeur
+    // 2. Valeur (Partie droite)
     const char* val_ptr = eq_pos + 1;
     while (*val_ptr && isspace(*val_ptr)) val_ptr++;
     
-    // Type
+    // --- CORRECTION DU TYPE ---
     VarType type;
-    if (val_ptr[0] == '"') type = TYPE_STRING;
-    else if (strchr(val_ptr, '.')) type = TYPE_FLOAT;
-    else type = TYPE_INT;
+    char cleaned_val[1024];
+    
+    // Cas A : Chaîne de caractères (commence par ")
+    if (val_ptr[0] == '"') {
+        type = TYPE_STRING;
+        strncpy(cleaned_val, val_ptr + 1, 1023); // Copie après le "
+        char* end_quote = strrchr(cleaned_val, '"');
+        if (end_quote) *end_quote = '\0';        // Coupe le " final
+    } 
+    // Cas B : Nombre (commence par un chiffre ou un signe -)
+    else if (isdigit(val_ptr[0]) || val_ptr[0] == '-') {
+        strcpy(cleaned_val, val_ptr);
+        
+        // Est-ce un float ou un int ?
+        if (strchr(val_ptr, '.')) {
+            type = TYPE_FLOAT;
+        } else {
+            type = TYPE_INT;
+        }
+    }
+    // Cas C : Erreur (ni string, ni nombre valide)
+    else {
+        // Optionnel : On pourrait vérifier ici si c'est une autre variable (ex: x = y)
+        // Pour l'instant, on rejette le texte brut comme "bonjour"
+        printf("Erreur : Valeur '%s' invalide (attendu: nombre ou \"texte\")\n", val_ptr);
+        return 0; // On quitte sans rien sauvegarder
+    }
 
-    // 3. Stockage
+    // 3. Stockage (Code inchangé)
     int idx = find_var_index(start);
     if (idx != -1) {
         if (symbol_table[idx].type != type) {
@@ -89,7 +113,7 @@ int var_process_assignment(const char* command) {
             return 1;
         }
         free(symbol_table[idx].value);
-        symbol_table[idx].value = safe_strdup(val_ptr);
+        symbol_table[idx].value = safe_strdup(cleaned_val);
         var_print(start);
     } else {
         if (var_count >= MAX_VARS) {
@@ -98,7 +122,7 @@ int var_process_assignment(const char* command) {
         }
         strcpy(symbol_table[var_count].name, start);
         symbol_table[var_count].type = type;
-        symbol_table[var_count].value = safe_strdup(val_ptr);
+        symbol_table[var_count].value = safe_strdup(cleaned_val);
         var_count++;
         var_print(start);
     }

@@ -79,7 +79,7 @@ int main() {
     printf("--- Exercice 3.1 : Bases ---\n");
     run_test("Echo simple",           "echo Hello World",       "Echo: Hello World");
     run_test("Echo avec espaces",     "echo Bonjour a tous",    "Echo: Bonjour a tous");
-    run_test("Commande inconnue",     "toto",                   "Commande non reconnue");
+    run_test("Commande inconnue",     "toto",                   "Erreur : la variable 'toto' n'est pas définie");
     
     // --- Exercice 3.2 ---
     printf("\n--- Exercice 3.2 : Commandes ---\n");
@@ -110,6 +110,63 @@ int main() {
     run_test("Parenthèses complexes",       "calc (10 + 2) / (4 - 1)", "4");
     run_test("Décimaux + Priorité",         "calc 10 - 2.5 * 2", "5");
     run_test("Calcul complexe (FR)",        "calculer 2 * (3 + 2)", "10");
+
+    // --- TP5 : Variables & Lambdas ---
+    printf("\n%s--- TP5 : Variables & Lambdas ---%s\n", COLOR_BLUE, COLOR_RESET);
+
+    // 1. Affectation et Affichage
+    // On teste x=10 et on vérifie le message de confirmation
+    run_test("Affectation Int", 
+             "x = 10", 
+             "Variable x définie avec la valeur 10 (entier)");
+    
+    // 2. Persistance et Calcul
+    // On définit A, puis B, puis on calcule A+B
+    run_test("Calcul avec Variables", 
+             "A = 5\nB = 10\ncalc A + B", 
+             "15");
+
+    // 3. String (avec guillemets)
+    run_test("Affectation String", 
+             "msg = \"coucou\"", 
+             "valeur coucou (chaîne de caractères)");
+    
+    // 4. BUG FIX : String SANS guillemets (doit échouer)
+    run_test("Erreur String sans quote", 
+             "bad = bonjour", 
+             "Erreur : Valeur 'bonjour' invalide");
+
+    // 5. Affichage simple d'une variable
+    run_test("Affichage via nom", 
+             "z = 42\nz", 
+             "Variable z définie avec la valeur 42");
+
+    // 6. Typage fort (Interdiction de changer de type)
+    run_test("Protection Type", 
+             "v = 10\nv = \"texte\"", 
+             "Erreur : changement de type non autorisé");
+
+    // 7. Lambdas Simples
+    run_test("Lambda Simple", 
+             "(lambda x.x+1) 10", 
+             "11");
+
+    // 8. Lambdas avec Variable externe
+    // (lambda x.x*2) VALEUR_DE_Y
+    run_test("Lambda + Variable", 
+             "y = 4\n(lambda x.x*2) y", 
+             "8");
+
+    // 9. Cas limite : Variable inexistante
+    // "toto" n'est pas défini, cela ne doit PAS afficher "0" ni "0.00"
+    run_test("Variable Inconnue", 
+             "toto", 
+             "Erreur : la variable 'toto' n'est pas définie"); 
+
+    // 10. Lambda sur une String (Cas impossible mathématiquement)
+    run_test("Erreur Math sur String", 
+             "txt = \"hello\"\n(lambda x.x+1) txt", 
+             "Erreur : la variable 'hello' n'est pas définie");
 
     // Nettoyage final
     cleanup();
