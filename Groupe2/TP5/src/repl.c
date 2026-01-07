@@ -1,3 +1,12 @@
+/**
+ * Nom du fichier : repl.c
+ * Objectif       : Point d'entrée principal du Shell. Implémente la boucle REPL
+ * (Read-Eval-Print Loop), gère les commandes système (echo, help, quit)
+ * et orchestre l'appel aux modules de calcul et de variables.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <time.h>

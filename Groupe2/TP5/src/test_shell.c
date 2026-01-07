@@ -1,3 +1,12 @@
+/**
+ * Nom du fichier : test_shell.c
+ * Objectif       : Suite de tests unitaires automatisés. Valide les fonctionnalités
+ * du TP3 (commandes), TP4 (calculs) et TP5 (variables & lambdas)
+ * en comparant la sortie du shell avec les résultats attendus.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

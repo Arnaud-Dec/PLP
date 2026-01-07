@@ -1,3 +1,11 @@
+/**
+ * Nom du fichier : variable.h
+ * Objectif       : Définition des structures de données pour la table des symboles.
+ * Prototypes des fonctions de gestion des variables (init, ajout, recherche, nettoyage).
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #ifndef VARIABLE_H
 #define VARIABLE_H
 

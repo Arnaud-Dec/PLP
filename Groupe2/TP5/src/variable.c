@@ -1,3 +1,12 @@
+/**
+ * Nom du fichier : variable.c
+ * Objectif       : Implémentation de la table des symboles. Gère le stockage des variables,
+ * le typage dynamique (INT, FLOAT, STRING), la gestion de la mémoire
+ * et le nettoyage des valeurs (suppression des guillemets).
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #include "variable.h"
 #include <stdio.h>
 #include <stdlib.h>

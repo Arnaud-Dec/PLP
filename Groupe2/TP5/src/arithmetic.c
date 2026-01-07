@@ -1,3 +1,13 @@
+/**
+ * Nom du fichier : arithmetic.c
+ * Objectif       : Moteur de calcul et parsing. Gère :
+ * - L'algorithme Shunting-yard (gestion priorités opératoires).
+ * - L'évaluation des expressions postfixées.
+ * - La substitution textuelle pour les expressions Lambda.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #include "arithmetic.h"
 #include "lexer.h"
 #include "variable.h"

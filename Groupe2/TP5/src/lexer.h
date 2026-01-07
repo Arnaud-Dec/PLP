@@ -1,3 +1,11 @@
+/**
+ * Nom du fichier : lexer.h
+ * Objectif       : Définition des types de Tokens (TOKEN_NUMBER, TOKEN_IDENTIFIER, etc.)
+ * et de la structure Lexer pour l'analyse syntaxique.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #ifndef LEXER_H
 #define LEXER_H
 

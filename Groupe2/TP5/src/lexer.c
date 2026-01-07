@@ -1,3 +1,12 @@
+/**
+ * Nom du fichier : lexer.c
+ * Objectif       : Analyseur lexical. Découpe la chaîne d'entrée brute en une suite
+ * de tokens intelligibles (nombres, opérateurs, parenthèses, variables)
+ * pour être traités par le parseur mathématique.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #include "lexer.h"
 #include <ctype.h>
 #include <stdlib.h>
