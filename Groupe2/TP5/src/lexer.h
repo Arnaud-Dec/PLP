@@ -7,6 +7,7 @@ typedef enum {
     TOKEN_OPERATOR,    // Opérateur (+, -, *, /)
     TOKEN_LPAREN,
     TOKEN_RPAREN,
+    TOKEN_IDENTIFIER,
     TOKEN_END,         // Fin de l'expression
     TOKEN_ERROR        // Erreur de syntaxe
 } TokenType;
@@ -16,6 +17,7 @@ typedef struct {
     TokenType type;
     double value;      // Pour les nombres
     char operator;     // Pour les opérateurs (+, -, *, / , (, ))
+    char identifier[50];
 } Token;
 
 // Structure pour gérer l'état du lexer

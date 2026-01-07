@@ -5,6 +5,7 @@
 #include "function.h"
 #include "arithmetic.h"
 #include "lexer.h"
+#include "variable.h" // Indispensable pour init/free
 
 /**
  * Programme qui simule un interpréteur de commandes simple.
@@ -21,24 +22,25 @@ void afficher_version(char* commande, int fr) {
 
 void afficher_aide(char* commande, int fr) {
     if (fr == 0) {
-        printf("===== Help - Commandes disponibles =====\n");
-        printf("help        : Affiche cette aide\n");
-        printf("version     : Affiche la version du programme\n");
-        printf("date        : Affiche la date et l'heure actuelles\n");
-        printf("echo <txt>  : Affiche le texte suivant la commande\n");
-        printf("calc <expr> : Calcule une expression (ex: calc 2 + 3)\n");
-        printf("quit        : Quitte le programme\n");
-        printf("========================================\n");
-    }
-    else {
-        printf("===== Aide - Commandes disponibles =====\n");
-        printf("aide        : Affiche cette aide\n");
-        printf("version     : Affiche la version du programme\n");
-        printf("date        : Affiche la date et l'heure actuelles\n");
-        printf("echo <txt>  : Affiche le texte suivant la commande\n");
-        printf("calc <expr> : Calcule une expression (ex: calc 2 + 3)\n");
-        printf("quitter     : Quitte le programme\n");
-        printf("========================================\n");
+        printf("===== Help =====\n");
+        printf("x = 12             : Assign variable\n");
+        printf("x                  : Display variable value\n");
+        printf("calc x + 2         : Calculate expression\n");
+        printf("(lambda x.x+1) 5   : Lambda function\n");
+        printf("echo <txt>         : Print text\n");
+        printf("version            : Show version\n");
+        printf("quit               : Exit\n");
+        printf("================\n");
+    } else {
+        printf("===== Aide =====\n");
+        printf("x = 12             : Assigner une variable\n");
+        printf("x                  : Afficher la valeur d'une variable\n");
+        printf("calculer x + 2     : Calculer une expression\n");
+        printf("(lambda x.x+1) 5   : Fonction Lambda\n");
+        printf("affiché <txt>      : Afficher un texte\n");
+        printf("version            : Afficher la version\n");
+        printf("quitter            : Quitter\n");
+        printf("================\n");
     }
 }
 
@@ -77,39 +79,22 @@ void traiter_quit(char* commande, int fr) {
     continuer = 0;
 }
 
-// NOUVELLE FONCTION : Traiter les calculs mathématiques
+
 void traiter_calcul(char* commande, int fr) {
-    // Extraire l'expression après "calc " ou "calculer "
     char* expression;
-    
-    if (fr == 0) {
-        // Commande "calc"
-        if (strlen(commande) <= 5) {
-            printf("Erreur : Veuillez fournir une expression (ex: calc 2 + 3)\n");
-            return;
-        }
-        expression = commande + 5; // Sauter "calc "
-    }
-    else {
-        // Commande "calculer"
-        if (strlen(commande) <= 9) {
-            printf("Erreur : Veuillez fournir une expression (ex: calculer 2 + 3)\n");
-            return;
-        }
-        expression = commande + 9; // Sauter "calculer "
-    }
-    
+    int decalage = (fr == 0) ? 5 : 9;
+    if (strlen(commande) <= decalage) return;
+    expression = commande + decalage;
+
     char postfix[1024];
     double resultat;
-
-    // 1. Conversion Infixe -> Postfixe
-    infixToPostfix(expression, postfix);
-
-    // 2. Évaluation
-    if (calculate(postfix, &resultat)) {
-        printf("%g\n", resultat);
-    } else {
-        printf("Erreur lors du calcul (Syntaxe ou Div/0)\n");
+    
+    if (infixToPostfix(expression, postfix)) {
+        if (calculate(postfix, &resultat)) {
+            printf("%g\n", resultat);
+        } else {
+            printf("Erreur calcul\n");
+        }
     }
 }
 
@@ -137,6 +122,8 @@ void normaliser_cmd(char* dest, const char* src) {
 
 int main()
 {
+    var_init();
+
     struct function table_f[] = {
         {"echo", "affiché", traiter_echo},
         {"quit", "quitter", traiter_quit},
@@ -192,11 +179,42 @@ int main()
         }
 
         if (!find_f) {
-            printf("Commande non reconnue. Essayer help ou aide pour connaître toutes les commandes disponibles.\n");
+            // 1. Affectation
+            if (strchr(commande, '=') != NULL) {
+                var_process_assignment(commande);
+            }
+            // 2. Lambda
+            else if (strstr(commande, "(lambda")) {
+                char expression_resolue[1024];
+                if (resolve_lambda(commande, expression_resolue)) {
+                    char postfix[1024];
+                    double resultat;
+                    if (infixToPostfix(expression_resolue, postfix)) {
+                        if (calculate(postfix, &resultat)) printf("%g\n", resultat);
+                    }
+                }
+            }
+            // 3. Calcul implicite ou Variable
+            // 3. Sinon, est-ce un calcul ou une variable ? (ex: x + 2 ou juste x)
+            else {
+                char postfix[1024];
+                double resultat;
+                
+                // Si infixToPostfix renvoie 0 (échec ou variable inconnue), on n'entre pas.
+                if (infixToPostfix(commande, postfix)) {
+                    if (calculate(postfix, &resultat)) {
+                        printf("%g\n", resultat);
+                    } else {
+                        printf("Erreur de calcul.\n");
+                    }
+                }
+                // Si infixToPostfix a échoué, l'erreur a déjà été affichée par arithmetic.c
+                // On ne fait rien ici pour éviter d'afficher "0".
+            }
         }
-
         printf("\n"); // Saut de ligne après la sortie
     }
 
+    var_free();
     return 0;
 }

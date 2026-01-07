@@ -50,12 +50,38 @@ static Token read_number(Lexer* lexer) {
     // Convertit la sous-chaîne en nombre
     char buffer[100];
     int length = lexer->position - start;
+    if (length >= 100) length = 99; // Sécurité buffer
     strncpy(buffer, &lexer->input[start], length);
     buffer[length] = '\0';
     
     token.value = atof(buffer);
     return token;
 }
+
+// --- FONCTION AJOUTÉE (Celle qui manquait) ---
+// Lit un identifiant (nom de variable comme x, toto, pi...)
+static Token read_identifier(Lexer* lexer) {
+    Token token;
+    token.type = TOKEN_IDENTIFIER;
+    int i = 0;
+    
+    // On lit tant que ce n'est pas un espace, un opérateur ou une parenthèse
+    while (lexer->input[lexer->position] != '\0' && 
+           !is_operator(lexer->input[lexer->position]) && 
+           !isspace(lexer->input[lexer->position]) &&
+           lexer->input[lexer->position] != '(' &&
+           lexer->input[lexer->position] != ')') {
+        
+        // On remplit le buffer du nom (limité à 49 caractères)
+        if (i < 49) {
+            token.identifier[i++] = lexer->input[lexer->position];
+        }
+        lexer->position++;
+    }
+    token.identifier[i] = '\0'; // Fin de chaîne
+    return token;
+}
+// ---------------------------------------------
 
 // Lit le prochain token
 Token lexer_next_token(Lexer* lexer) {
@@ -73,7 +99,7 @@ Token lexer_next_token(Lexer* lexer) {
     char current = lexer->input[lexer->position];
     
     // Si c'est un chiffre, lit un nombre
-    if (isdigit(current)) {
+    if (isdigit(current) || current == '.') {
         return read_number(lexer);
     }
     
@@ -98,7 +124,6 @@ Token lexer_next_token(Lexer* lexer) {
         return token;
     }
     
-    // Caractère non reconnu = erreur
-    token.type = TOKEN_ERROR;
-    return token;
+    // Si rien de tout ça, c'est un identifiant (variable)
+    return read_identifier(lexer);
 }
