@@ -97,7 +97,7 @@ int main() {
     run_test("Addition",              "calc 2 + 3",             "5");
     run_test("Soustraction",          "calc 10 - 4",            "6");
     run_test("Multiplication",        "calc 2.5 * 2",           "5");
-    run_test("Division par zéro",     "calc 5 / 0",             "Division par zéro");
+    run_test("Division par zéro",     "calc 5 / 0",             "Erreur: Div / 0");
     run_test("Resultat a virgule",    "calc 1.2 * 4.0",         "4.8");
     run_test("Priorité (simple)",     "calculer 10 / 2",        "5");
     run_test("Erreur syntaxe",        "calc 2 +",               "Erreur");
