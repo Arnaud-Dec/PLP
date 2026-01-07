@@ -1,3 +1,12 @@
+/**
+ * Nom du fichier : lexer.c
+ * Objectif       : Analyseur lexical pour les expressions mathématiques (TP4).
+ * Transforme une chaîne de caractères brute (ex: "10 + 2") en une
+ * séquence de tokens structurés exploitables par le parseur.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #include "lexer.h"
 #include <ctype.h>
 #include <stdlib.h>

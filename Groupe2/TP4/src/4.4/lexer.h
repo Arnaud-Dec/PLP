@@ -1,3 +1,12 @@
+/**
+ * Nom du fichier : lexer.h
+ * Objectif       : Définitions des structures pour l'analyse lexicale (TP4).
+ * Définit les types de tokens supportés : Nombres, Opérateurs (+ - * /)
+ * et Parenthèses ( ) pour le parsing mathématique.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #ifndef LEXER_H
 #define LEXER_H
 

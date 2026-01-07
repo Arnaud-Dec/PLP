@@ -1,3 +1,12 @@
+/**
+ * Nom du fichier : arithmetic.c
+ * Objectif       : Cœur de la calculatrice (TP4). Implémente :
+ * - L'algorithme Shunting-yard pour gérer les priorités (* > +) et parenthèses.
+ * - L'évaluation d'expressions postfixées (RPN) à l'aide d'une pile.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #include "arithmetic.h"
 #include "lexer.h"
 #include <stdio.h>

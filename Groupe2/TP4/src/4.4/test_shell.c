@@ -1,3 +1,12 @@
+/**
+ * Nom du fichier : test_shell.c
+ * Objectif       : Tests unitaires pour le TP4.
+ * Valide spécifiquement la priorité des opérations, la gestion
+ * des parenthèses imbriquées et les nombres décimaux.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

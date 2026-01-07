@@ -1,3 +1,12 @@
+/**
+ * Nom du fichier : repl.c
+ * Objectif       : Boucle principale de l'interpréteur (TP4).
+ * Gère la commande 'calc' pour évaluer des expressions mathématiques
+ * complexes (parenthèses, priorités) via le module arithmetic.
+ * Auteurs        : 1. Théo DEMARIA
+ * 2. Arnaud DECOURT
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
